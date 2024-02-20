@@ -5,7 +5,6 @@ set -e
 KLIPPER_PATH="/home/pi/klipper"
 SYSTEMDDIR="/etc/systemd/system"
 MOONRAKER_CONFIG_DIR="/home/pi/printer_data/config"
-echo "$KLIPPER_PATH $MOONRAKER_CONFIG_DIR $HOME"
 
 # Fall back to old directory for configuration as default
 if [ ! -d "${MOONRAKER_CONFIG_DIR}" ]; then
@@ -16,7 +15,7 @@ fi
 usage(){ echo "Usage: $0 [-k <klipper path>] [-c <configuration path>]" 1>&2; exit 1; }
 # Parse command line arguments
 while getopts "k:c:uh" arg; do
-    case $arg in
+    case $arg in``
         k) KLIPPER_PATH=$OPTARG;;
         c) MOONRAKER_CONFIG_DIR=$OPTARG;;
         u) UNINSTALL=1;;
