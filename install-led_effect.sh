@@ -2,14 +2,15 @@
 # Force script to exit if an error occurs
 set -e
 
-KLIPPER_PATH="${HOME}/klipper"
+KLIPPER_PATH="/home/pi/klipper"
 SYSTEMDDIR="/etc/systemd/system"
-MOONRAKER_CONFIG_DIR="${HOME}/printer_data/config"
+MOONRAKER_CONFIG_DIR="/home/pi/printer_data/config"
+echo "$KLIPPER_PATH $MOONRAKER_CONFIG_DIR $HOME"
 
 # Fall back to old directory for configuration as default
 if [ ! -d "${MOONRAKER_CONFIG_DIR}" ]; then
-    echo "\"$MOONRAKER_CONFIG_DIR\" does not exist. Falling back to "${HOME}/klipper_config" as default."
-    MOONRAKER_CONFIG_DIR="${HOME}/klipper_config"
+    echo "\"$MOONRAKER_CONFIG_DIR\" does not exist. Falling back to "home/pi/klipper_config" as default."
+    MOONRAKER_CONFIG_DIR="/home/pi/klipper_config"
 fi
 
 usage(){ echo "Usage: $0 [-k <klipper path>] [-c <configuration path>]" 1>&2; exit 1; }
@@ -68,25 +69,6 @@ restart_moonraker()
     echo "[OK]"
 }
 
-# Add updater for led_effect to moonraker.conf
-add_updater()
-{
-    echo -e -n "Adding update manager to moonraker.conf... "
-
-    update_section=$(grep -c '\[update_manager led_effect\]' ${MOONRAKER_CONFIG_DIR}/moonraker.conf || true)
-    if [ "${update_section}" -eq 0 ]; then
-        echo -e "\n" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
-        while read -r line; do
-            echo -e "${line}" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
-        done < "$PWD/file_templates/moonraker_update.txt"
-        echo -e "\n" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
-        echo "[OK]"
-        restart_moonraker
-        else
-        echo -e "[update_manager led_effect] already exists in moonraker.conf [SKIPPED]"
-    fi
-}
-
 restart_klipper()
 {
     echo -n "Restarting Klipper... "
@@ -137,7 +119,6 @@ check_folders
 stop_klipper
 if [ ! $UNINSTALL ]; then
     link_extension
-    add_updater
 else
     uninstall
 fi
